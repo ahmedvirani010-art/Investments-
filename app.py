@@ -14,8 +14,10 @@ from skill_loader import load_skills
 load_dotenv()
 
 # ---------------------------------------------------------------------------
-# Model registry — grouped by provider
+# Constants
 # ---------------------------------------------------------------------------
+SKILLS_DIR = os.path.dirname(os.path.abspath(__file__))
+
 MODELS: dict[str, dict[str, str]] = {
     "Anthropic": {
         "Claude 3.5 Sonnet": "anthropic/claude-3.5-sonnet",
@@ -33,6 +35,14 @@ MODELS: dict[str, dict[str, str]] = {
 }
 
 # ---------------------------------------------------------------------------
+# Cached skill loading (reads ZIPs only once per server process)
+# ---------------------------------------------------------------------------
+@st.cache_resource
+def _load_skills_cached(skills_dir: str) -> dict:
+    return load_skills(skills_dir)
+
+
+# ---------------------------------------------------------------------------
 # Page config
 # ---------------------------------------------------------------------------
 st.set_page_config(
@@ -44,12 +54,10 @@ st.set_page_config(
 # ---------------------------------------------------------------------------
 # Session state initialisation
 # ---------------------------------------------------------------------------
+skills = _load_skills_cached(SKILLS_DIR)
+
 if "messages" not in st.session_state:
     st.session_state.messages: list[dict] = []
-
-if "skills" not in st.session_state:
-    skills_dir = os.path.dirname(os.path.abspath(__file__))
-    st.session_state.skills: dict[str, str] = load_skills(skills_dir)
 
 # ---------------------------------------------------------------------------
 # Sidebar
@@ -78,15 +86,34 @@ with st.sidebar:
 
     # Skill selection
     st.subheader("Skill (System Prompt)")
-    skill_names = list(st.session_state.skills.keys())
+    skill_names = list(skills.keys())
 
     if skill_names:
         selected_skill = st.selectbox("Active Skill", skill_names)
-        system_prompt = st.session_state.skills[selected_skill]
+        skill_info = skills[selected_skill]
+
+        include_refs = st.checkbox(
+            "Include reference documents",
+            value=True,
+            help="Append embedded reference docs to the system prompt. "
+                 "Disable for smaller models with limited context.",
+        )
+        if skill_info["reference_files"]:
+            st.caption(
+                f"📎 {len(skill_info['reference_files'])} reference doc(s): "
+                + ", ".join(skill_info["reference_files"])
+            )
+
+        system_prompt = (
+            skill_info["system_prompt"]
+            if include_refs
+            else skill_info["system_prompt_skill_only"]
+        )
         with st.expander("Preview system prompt"):
-            st.markdown(f"```\n{system_prompt[:800]}...\n```")
+            st.markdown(f"```\n{system_prompt[:800]}…\n```")
     else:
         selected_skill = None
+        include_refs = False
         system_prompt = (
             "You are an expert PSX (Pakistan Stock Exchange) investment analyst. "
             "Provide detailed, data-driven investment analysis."
@@ -96,7 +123,7 @@ with st.sidebar:
     st.divider()
 
     # Temperature
-    temperature = st.slider("Temperature", 0.0, 1.0, 0.7, 0.05)
+    temperature = st.slider("Temperature", 0.0, 1.0, 0.3, 0.05)
 
     st.divider()
 
@@ -133,7 +160,7 @@ if not api_key:
     st.warning("Enter your OpenRouter API key in the sidebar to start chatting.")
     st.stop()
 
-user_input = st.chat_input("Ask your investment question…")
+user_input = st.chat_input("Ask about PSX stocks, sectors, portfolio, valuations…")
 
 if user_input:
     # Display user message
@@ -141,7 +168,7 @@ if user_input:
     with st.chat_message("user"):
         st.markdown(user_input)
 
-    # Build messages for API call
+    # Build messages for API call (system prompt + full history)
     api_messages = [{"role": "system", "content": system_prompt}] + [
         {"role": m["role"], "content": m["content"]}
         for m in st.session_state.messages
@@ -149,19 +176,16 @@ if user_input:
 
     # Stream assistant response
     with st.chat_message("assistant"):
-        placeholder = st.empty()
-        full_response = ""
         try:
             client = OpenRouterClient(api_key=api_key)
-            for token in client.stream_chat(model_id, api_messages, temperature):
-                full_response += token
-                placeholder.markdown(full_response + "▌")
-            placeholder.markdown(full_response)
+
+            def _token_stream():
+                yield from client.stream_chat(model_id, api_messages, temperature)
+
+            full_response = st.write_stream(_token_stream())
         except Exception as exc:
-            error_msg = f"**Error:** {exc}"
-            placeholder.error(error_msg)
-            # Remove the user message so the user can retry
-            st.session_state.messages.pop()
+            st.error(f"**Error:** {exc}")
+            st.session_state.messages.pop()  # remove user message so they can retry
             st.stop()
 
     st.session_state.messages.append({"role": "assistant", "content": full_response})
