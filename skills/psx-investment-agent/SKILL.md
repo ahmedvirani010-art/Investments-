@@ -56,10 +56,16 @@ Identify which lifecycle stage the user is acting on:
 | Exit a position | CLOSED | "I sold X", "exiting X", "closing X", "out of X", "sold my X" | STEP 2 → CLOSED STAGE |
 | Portfolio-wide snapshot | PORTFOLIO | "portfolio status", "show my holdings", "rebalance", "morning briefing" | STEP 2 → HOLD STAGE (all positions) |
 | Monthly Review | REVIEW | "monthly review", "end of month", "EOM review", "monthly check" | Read `references/monthly-review.md` → execute 7-step sequence |
+| Watchlist Management | WATCHLIST | "show watchlist", "review watchlist", "clean up watchlist", "watchlist status" | Read `references/watchlist.md` → display entries + run review logic |
+| Thesis Check | THESIS | "thesis update", "thesis integrity", "check thesis", "thesis check" | Read `references/thesis-tracker.md` → run thesis integrity check |
 
 If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or have you already bought it?"
 
 **For Monthly Review sessions:** Read `references/monthly-review.md` in full before proceeding. That file contains the complete 7-step protocol, quarterly additions, output format, and Drive save instructions.
+
+**For Watchlist Management sessions:** Read `references/watchlist.md` for the 9-field entry schema, review conditions, display format, and Drive save path.
+
+**For Thesis Check sessions:** Read `references/thesis-tracker.md` for the 4-status framework, EVOLVED protocol, version control rules, and Drive save path.
 
 ---
 
@@ -161,6 +167,7 @@ If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or ha
    - INTACT — all core thesis points holding, no new disconfirming evidence
    - STRESSED — 1–2 thesis points under pressure, position under watch
    - BROKEN — core investment thesis has materially failed
+   - EVOLVED — thesis materially changed but not failed; read `references/thesis-tracker.md` for version control protocol, then write Thesis v[N+1] and treat as a fresh hold decision
 4. Update `portfolio-master.md` with new thesis status + date
 
 **D. Drawdown breach:**
@@ -242,7 +249,7 @@ All 14 fields required per ticker in `PSX_Research/Portfolio/portfolio-master.md
 | Composite Score at Entry | 7-factor score when position opened (date-stamped) |
 | Current Composite Score | Most recent score (date-stamped) |
 | Thesis Version | Active thesis version number (v1, v2, etc.) |
-| Thesis Status | INTACT / STRESSED / BROKEN — reassessed monthly |
+| Thesis Status | INTACT / STRESSED / BROKEN / EVOLVED — reassessed monthly |
 | Drawdown Alert Level | % below entry that triggers mandatory reassessment |
 | Ex-Date (next) | Next dividend ex-date (from Dividend Calendar module) |
 | Next Results Month | Expected earnings month (from Earnings Calendar module) |
