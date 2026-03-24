@@ -36,7 +36,11 @@ Before any action in any session:
    - Composite scores older than 7 days → flag: "STALE: portfolio scores last updated [N] days ago"
    - Macro context older than 14 days → flag: "STALE: macro context last updated [N] days ago"
 
-3. Inject pulled context into all downstream analysis. Never start cold.
+3. **Check last monthly review date** from `portfolio-master.md`:
+   - If Last Review Date > 28 days ago → prompt: "It's been [N] days since your last monthly review. Run it now?"
+   - Do not auto-run — only prompt. User must confirm.
+
+4. Inject pulled context into all downstream analysis. Never start cold.
 
 ---
 
@@ -44,15 +48,18 @@ Before any action in any session:
 
 Identify which lifecycle stage the user is acting on:
 
-| User Intent | Stage | Trigger Phrases |
-|-------------|-------|----------------|
-| Add to research / watchlist | WATCHLIST | "research X", "add X to watchlist", "watching X", "looking at X", "interested in X" |
-| Enter a position | OPEN | "I bought X", "entering X", "took a position in X", "open a position in X", "added X" |
-| Review / monitor open position | HOLD | "check X", "thesis update on X", "rescore X", "position review", "how is X doing", "news on X" |
-| Exit a position | CLOSED | "I sold X", "exiting X", "closing X", "out of X", "sold my X" |
-| Portfolio-wide | PORTFOLIO | "portfolio status", "show my holdings", "rebalance", "morning briefing", "monthly review" |
+| User Intent | Stage / Module | Trigger Phrases | Routing |
+|-------------|---------------|----------------|---------|
+| Add to research / watchlist | WATCHLIST | "research X", "add X to watchlist", "watching X", "looking at X", "interested in X" | STEP 2 → WATCHLIST STAGE |
+| Enter a position | OPEN | "I bought X", "entering X", "took a position in X", "open a position in X", "added X" | STEP 2 → OPEN STAGE |
+| Review / monitor open position | HOLD | "check X", "thesis update on X", "rescore X", "position review", "how is X doing", "news on X" | STEP 2 → HOLD STAGE |
+| Exit a position | CLOSED | "I sold X", "exiting X", "closing X", "out of X", "sold my X" | STEP 2 → CLOSED STAGE |
+| Portfolio-wide snapshot | PORTFOLIO | "portfolio status", "show my holdings", "rebalance", "morning briefing" | STEP 2 → HOLD STAGE (all positions) |
+| Monthly Review | REVIEW | "monthly review", "end of month", "EOM review", "monthly check" | Read `references/monthly-review.md` → execute 7-step sequence |
 
 If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or have you already bought it?"
+
+**For Monthly Review sessions:** Read `references/monthly-review.md` in full before proceeding. That file contains the complete 7-step protocol, quarterly additions, output format, and Drive save instructions.
 
 ---
 
