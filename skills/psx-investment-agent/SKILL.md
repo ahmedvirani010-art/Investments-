@@ -56,12 +56,14 @@ Identify which lifecycle stage the user is acting on:
 | Enter a position | OPEN | "I bought X", "entering X", "took a position in X", "open a position in X", "added X" | STEP 2 → OPEN STAGE |
 | Review / monitor open position | HOLD | "check X", "thesis update on X", "rescore X", "position review", "how is X doing", "news on X" | STEP 2 → HOLD STAGE |
 | Exit a position | CLOSED | "I sold X", "exiting X", "closing X", "out of X", "sold my X" | STEP 2 → CLOSED STAGE |
-| Portfolio-wide snapshot | PORTFOLIO | "portfolio status", "show my holdings", "rebalance", "morning briefing" | STEP 2 → HOLD STAGE (all positions) |
+| Portfolio-wide snapshot | PORTFOLIO | "portfolio status", "show my holdings", "rebalance", "morning briefing" | STEP 2 → HOLD STAGE (all positions); also check `references/capital-queue.md` for slots ready to deploy |
 | Monthly Review | REVIEW | "monthly review", "end of month", "EOM review", "monthly check" | Read `references/monthly-review.md` → execute 7-step sequence |
 | Watchlist Management | WATCHLIST | "show watchlist", "review watchlist", "clean up watchlist", "watchlist status" | Read `references/watchlist.md` → display entries + run review logic |
 | Thesis Check | THESIS | "thesis update", "thesis integrity", "check thesis", "thesis check" | Read `references/thesis-tracker.md` → run thesis integrity check |
 | Dividend Tracking | DIVIDEND | "dividend check", "ex-date", "upcoming dividends", "dividend calendar" | Read `references/dividend-calendar.md` → display calendar + yield spread |
 | Drawdown Alert | DRAWDOWN | "drawdown alert", "position down X%", "drawdown check", "stop check" | Read `references/drawdown.md` → run per-position + portfolio-level check |
+| Benchmark | BENCHMARK | "run benchmark", "vs KSE-100", "benchmark check", "alpha vs index" | Read `references/benchmark.md` → compute 6 metrics vs KSE-100 |
+| Capital Deployment | CAPITAL | "capital to deploy", "cash queue", "what to buy next", "deploy cash" | Read `references/capital-queue.md` → show queue + check slots |
 
 If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or have you already bought it?"
 
@@ -74,6 +76,10 @@ If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or ha
 **For Dividend Tracking sessions:** Read `references/dividend-calendar.md` for the 8-field schema, agent actions, yield-spread calculation, and Drive path.
 
 **For Drawdown Alert sessions:** Read `references/drawdown.md` for the 3-level per-position thresholds, portfolio-level alerts, and session-start scan protocol.
+
+**For Benchmark sessions:** Read `references/benchmark.md` for the 6 metrics, computation steps, alert rule, and Drive append format.
+
+**For Capital Deployment sessions:** Read `references/capital-queue.md` for the 4-slot queue structure, T+30 tracking logic, cash floor enforcement, and Drive path.
 
 ---
 
@@ -227,7 +233,7 @@ When any position is marked BROKEN:
    - Append to `PSX_Research/Portfolio/closed-positions.md`
 
 6. **Capital freed up notification:** "Capital freed: ~[PKR amount] / [weight]%. Would you like to add this to the Capital Deployment Queue?"
-   - If yes → trigger Capital Deployment Queue module (Module 08)
+   - If yes → read `references/capital-queue.md` and update `PSX_Research/Portfolio/capital-queue.md` with freed capital; prompt review of Slot A/B/C candidates
 
 ---
 
