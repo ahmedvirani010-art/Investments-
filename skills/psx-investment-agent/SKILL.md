@@ -42,6 +42,8 @@ Before any action in any session:
 
 4. Inject pulled context into all downstream analysis. Never start cold.
 
+5. **Run drawdown scan** — fetch live prices via web search; compute drawdown % for each OPEN position vs. entry price; check against thresholds in `references/drawdown.md`; surface any Level 1/2/3 breaches before proceeding with the user's requested action.
+
 ---
 
 ## STEP 1: DETECT LIFECYCLE STAGE
@@ -58,6 +60,8 @@ Identify which lifecycle stage the user is acting on:
 | Monthly Review | REVIEW | "monthly review", "end of month", "EOM review", "monthly check" | Read `references/monthly-review.md` → execute 7-step sequence |
 | Watchlist Management | WATCHLIST | "show watchlist", "review watchlist", "clean up watchlist", "watchlist status" | Read `references/watchlist.md` → display entries + run review logic |
 | Thesis Check | THESIS | "thesis update", "thesis integrity", "check thesis", "thesis check" | Read `references/thesis-tracker.md` → run thesis integrity check |
+| Dividend Tracking | DIVIDEND | "dividend check", "ex-date", "upcoming dividends", "dividend calendar" | Read `references/dividend-calendar.md` → display calendar + yield spread |
+| Drawdown Alert | DRAWDOWN | "drawdown alert", "position down X%", "drawdown check", "stop check" | Read `references/drawdown.md` → run per-position + portfolio-level check |
 
 If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or have you already bought it?"
 
@@ -66,6 +70,10 @@ If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or ha
 **For Watchlist Management sessions:** Read `references/watchlist.md` for the 9-field entry schema, review conditions, display format, and Drive save path.
 
 **For Thesis Check sessions:** Read `references/thesis-tracker.md` for the 4-status framework, EVOLVED protocol, version control rules, and Drive save path.
+
+**For Dividend Tracking sessions:** Read `references/dividend-calendar.md` for the 8-field schema, agent actions, yield-spread calculation, and Drive path.
+
+**For Drawdown Alert sessions:** Read `references/drawdown.md` for the 3-level per-position thresholds, portfolio-level alerts, and session-start scan protocol.
 
 ---
 
@@ -126,10 +134,7 @@ If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or ha
    Pass: entry date, quantity, purchase price
    Output: CGT cohort (1–4), holding period clock started
 
-4. **Set drawdown alert level** based on conviction tier:
-   - HIGH (>15% weight) → alert at 8% below entry
-   - MED (8–15% weight) → alert at 10% below entry
-   - TRACKER (<8% weight) → alert at 15% below entry
+4. **Set drawdown alert levels** per conviction tier — read `references/drawdown.md` for the full 3-level (Warn / Review / Mandatory Action) threshold table. Record the Level 3 threshold in the Position Record as the Drawdown Alert Level.
 
 5. **Create full position record** (all 14 fields — see POSITION RECORD SCHEMA below)
 
@@ -171,10 +176,12 @@ If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or ha
 4. Update `portfolio-master.md` with new thesis status + date
 
 **D. Drawdown breach:**
-1. Flag: "⚠️ [TICKER] has reached [N]% drawdown from entry. Mandatory reassessment triggered."
-2. Run thesis integrity check (same as C above)
-3. If thesis INTACT → document explicitly why hold is justified (Decision Journal entry)
-4. If thesis BROKEN → mandatory exit decision
+1. Identify breach level (Level 1 / 2 / 3) — read `references/drawdown.md` for conviction-tier thresholds
+2. Execute level-appropriate response:
+   - Level 1: warn and continue
+   - Level 2: flag + prompt thesis integrity check; call `psx-portfolio-analysis` EVENT RESCORE mode
+   - Level 3: halt session; full thesis review required before proceeding; document outcome in Decision Journal
+3. For Level 3 BROKEN thesis → invoke Broken Thesis Protocol (below)
 
 ---
 
