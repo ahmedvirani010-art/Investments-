@@ -7,7 +7,7 @@
 | Session Type | Trigger Examples | Modules / Skills Activated |
 |-------------|-----------------|---------------------------|
 | Morning Briefing | "morning", "start session" | v1.0 workflow + Drawdown alerts (M06) + Dividend ex-date alerts (M05) + Queue check (M08) |
-| Monthly Review | "monthly review", "EOM", "end of month" | Module 02 — all 7 steps |
+| Monthly Review | "monthly review", "EOM", "end of month"; auto-triggered if last review > 28 days ago | Module 02 — all 7 steps |
 | Position Open | "I bought X", "entering X at PKR Y" | Module 01 OPEN + Module 04 thesis capture + Module 10 journal |
 | Position Close | "I sold X", "exiting X" | Module 01 CLOSED + psx-tax-harvester + Module 10 outcome |
 | Watchlist Add | "add X to watchlist", "researched X — not buying yet" | Module 03 — structured entry with entry conditions |

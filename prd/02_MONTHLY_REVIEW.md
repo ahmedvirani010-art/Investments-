@@ -19,8 +19,8 @@ Runs on the last trading Friday of each month. Prevents portfolio quality from d
 | 3 | Full Composite Rescore | Re-run 7-factor scoring for all holdings. Delta vs. prior month. Flag score delta > 0.5 or boundary crossing. | psx-portfolio-analysis |
 | 4 | Thesis Integrity Check | Compare current fundamentals vs. original thesis per holding. Assess INTACT / STRESSED / BROKEN. BROKEN = mandatory exit flag. | sector-analysis, psx-earnings-analyzer |
 | 5 | Watchlist Promotion Review | Check all watchlist entries. Flag any where entry conditions are now met. Offer to promote to OPEN. | psx-valuation-screen, psx-rs-trend |
-| 6 | Forward Calendar Update | Refresh dividend ex-dates. Flag ex-dates within 30 days. Update earnings estimates. Trigger PREVIEW for results due next month. | psx-earnings-analyzer (PREVIEW) |
-| 7 | Tax Position Snapshot | Within 120 days of June 30: full harvest analysis. Otherwise: days to year-end, CGT threshold watches, losses vs. gains. | psx-tax-harvester |
+| 6 | Forward Calendar Update | Refresh dividend ex-dates. Flag ex-dates within 15 trading days. Update earnings estimates. Trigger PREVIEW for results due next month. | psx-earnings-analyzer (PREVIEW) |
+| 7 | Tax Position Snapshot | Within 120 days of June 30: flag harvest opportunities to watch. Within 60 days of June 30: full harvest analysis, act on opportunities. Otherwise: days to year-end, CGT threshold watches, losses vs. gains. | psx-tax-harvester |
 
 ---
 

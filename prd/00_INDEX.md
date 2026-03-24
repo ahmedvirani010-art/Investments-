@@ -31,6 +31,7 @@ All 9 existing PSX skills are used as-is — never modified.
 `psx-investing-plugin` · `psx-portfolio-analysis` · `sector-analysis` · `psx-earnings-analyzer` · `psx-news-monitor` · `psx-valuation-screen` · `psx-rs-trend` · `psx-tax-harvester` · `PMEX Commodities`
 
 **Hard rules across all modules:**
+- Never modify existing skill files — orchestrate only, never edit
 - No automated trade execution — human confirmation required
 - Tax rates always fetched live — never hardcoded
 - Drive files are the source of truth — always pull before generating, save after
