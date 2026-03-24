@@ -44,6 +44,8 @@ Before any action in any session:
 
 5. **Run drawdown scan** — fetch live prices via web search; compute drawdown % for each OPEN position vs. entry price; check against thresholds in `references/drawdown.md`; surface any Level 1/2/3 breaches before proceeding with the user's requested action.
 
+6. **Full alert reference:** All 10 system alerts (conditions, flag messages, emoji standards, v1.0/v2.0 versions) are defined in `references/alert-thresholds.md`. Morning briefing runs the complete alert sequence defined there. Display standards for all output formats are in `references/ui-formats.md`.
+
 ---
 
 ## STEP 1: DETECT LIFECYCLE STAGE
@@ -66,6 +68,12 @@ Identify which lifecycle stage the user is acting on:
 | Capital Deployment | CAPITAL | "capital to deploy", "cash queue", "what to buy next", "deploy cash" | Read `references/capital-queue.md` → show queue + check slots |
 | Earnings Calendar | EARNINGS | "earnings preview", "results season", "earnings calendar", "when are results", "Q results" | Read `references/earnings-calendar.md` → show calendar + check 30-day PREVIEW trigger |
 | Decision Journal | JOURNAL | "decision journal", "log a trade", "log my decision", "process audit", "quarterly audit" | Read `references/decision-journal.md` → log entry or run quarterly audit |
+| Quarterly Audit | AUDIT | "Q1 audit", "Q2 audit", "quarterly audit", "process review" | Read `references/decision-journal.md` (quarterly audit) + `references/benchmark.md` → 5-check audit + 300–400 word memo |
+| Sector Research | SECTOR | "analyze X sector", "sector deep dive", "research X sector" | Call `sector-analysis` → `psx-valuation-screen` → `psx-rs-trend` |
+| Earnings Event | EARNINGS-RESULT | "results out for X", "X just reported", "earnings out" | Call `psx-earnings-analyzer` ANALYZER mode → `psx-portfolio-analysis` event rescore → read `references/earnings-calendar.md` → save outcome |
+| Portfolio Review | RESCORE | "review my portfolio", "rescore all", "rescore", "what's in my portfolio" | `psx-investing-plugin` pull → `psx-portfolio-analysis` → `psx-tax-harvester` if within 60 days of June 30 |
+| Commodity Check | COMMODITY | "gold outlook", "cotton impact", "oil price", "palm oil", "PMEX" | Call `PMEX Commodities` → `sector-analysis` equity linkage to PSX tickers |
+| Macro Shock | MACRO | "SBP cuts", "SBP hikes", "PKR crash", "Hormuz escalation", "macro event" | `psx-news-monitor` → `PMEX Commodities` → `psx-portfolio-analysis` scenario rescore → `psx-rs-trend` |
 
 If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or have you already bought it?"
 
