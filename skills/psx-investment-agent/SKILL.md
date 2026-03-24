@@ -56,7 +56,7 @@ Identify which lifecycle stage the user is acting on:
 | Enter a position | OPEN | "I bought X", "entering X", "took a position in X", "open a position in X", "added X" | STEP 2 → OPEN STAGE |
 | Review / monitor open position | HOLD | "check X", "thesis update on X", "rescore X", "position review", "how is X doing", "news on X" | STEP 2 → HOLD STAGE |
 | Exit a position | CLOSED | "I sold X", "exiting X", "closing X", "out of X", "sold my X" | STEP 2 → CLOSED STAGE |
-| Portfolio-wide snapshot | PORTFOLIO | "portfolio status", "show my holdings", "rebalance", "morning briefing" | STEP 2 → HOLD STAGE (all positions); also check `references/capital-queue.md` for slots ready to deploy |
+| Portfolio-wide snapshot | PORTFOLIO | "portfolio status", "show my holdings", "rebalance", "morning briefing" | STEP 2 → HOLD STAGE (all positions); also check `references/capital-queue.md` for slots ready to deploy; also check `references/earnings-calendar.md` for OPEN positions with results due within 30 days |
 | Monthly Review | REVIEW | "monthly review", "end of month", "EOM review", "monthly check" | Read `references/monthly-review.md` → execute 7-step sequence |
 | Watchlist Management | WATCHLIST | "show watchlist", "review watchlist", "clean up watchlist", "watchlist status" | Read `references/watchlist.md` → display entries + run review logic |
 | Thesis Check | THESIS | "thesis update", "thesis integrity", "check thesis", "thesis check" | Read `references/thesis-tracker.md` → run thesis integrity check |
@@ -64,6 +64,8 @@ Identify which lifecycle stage the user is acting on:
 | Drawdown Alert | DRAWDOWN | "drawdown alert", "position down X%", "drawdown check", "stop check" | Read `references/drawdown.md` → run per-position + portfolio-level check |
 | Benchmark | BENCHMARK | "run benchmark", "vs KSE-100", "benchmark check", "alpha vs index" | Read `references/benchmark.md` → compute 6 metrics vs KSE-100 |
 | Capital Deployment | CAPITAL | "capital to deploy", "cash queue", "what to buy next", "deploy cash" | Read `references/capital-queue.md` → show queue + check slots |
+| Earnings Calendar | EARNINGS | "earnings preview", "results season", "earnings calendar", "when are results", "Q results" | Read `references/earnings-calendar.md` → show calendar + check 30-day PREVIEW trigger |
+| Decision Journal | JOURNAL | "decision journal", "log a trade", "log my decision", "process audit", "quarterly audit" | Read `references/decision-journal.md` → log entry or run quarterly audit |
 
 If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or have you already bought it?"
 
@@ -80,6 +82,10 @@ If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or ha
 **For Benchmark sessions:** Read `references/benchmark.md` for the 6 metrics, computation steps, alert rule, and Drive append format.
 
 **For Capital Deployment sessions:** Read `references/capital-queue.md` for the 4-slot queue structure, T+30 tracking logic, cash floor enforcement, and Drive path.
+
+**For Earnings Calendar sessions:** Read `references/earnings-calendar.md` for the 4-step calendar logic, proactive 30-day PREVIEW trigger, PSX results cluster reference, and Drive structure.
+
+**For Decision Journal sessions:** Read `references/decision-journal.md` for the 10 required fields, counter-argument gate, auto-trigger points (BUY / SELL / BROKEN THESIS), and quarterly process audit protocol.
 
 ---
 
@@ -115,7 +121,7 @@ If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or ha
    - Ticker file: `PSX_Research/Stocks/[TICKER].md`
    - Update `portfolio-master.md` — add ticker with Stage: WATCHLIST
 
-6. **Log to Decision Journal** — record: date, reason for watchlist addition, entry conditions set
+6. **Log to Decision Journal** — read `references/decision-journal.md` → record: date, reason for watchlist addition, entry conditions set, conviction tier; counter-argument required before logging
 
 ---
 
@@ -148,7 +154,7 @@ If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or ha
    - Update `PSX_Research/Portfolio/portfolio-master.md` — promote ticker to Stage: OPEN
    - Update `PSX_Research/Stocks/[TICKER].md` with entry data
 
-7. **Log entry to Decision Journal** — record: date, price, conviction tier, thesis version, composite score at entry, rationale
+7. **Log entry to Decision Journal** — read `references/decision-journal.md` → record all 10 required fields (BUY entry); counter-argument gate enforced before saving
 
 8. **Check 5% cash floor:** After recording new position weight, if remaining cash drops below 5% of portfolio — flag: "⚠️ Cash floor warning: [X]% cash remaining. Explicit confirmation required to proceed below 5%." Do not proceed until user acknowledges.
 
@@ -166,10 +172,11 @@ If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or ha
 3. Reassess thesis status: INTACT / STRESSED / BROKEN
 4. If BROKEN → mandatory exit decision (see BROKEN THESIS PROTOCOL below)
 
-**B. Earnings release:**
-1. Call `psx-earnings-analyzer` — normalize results, compute EPS surprise, update forward EPS
-2. Call `psx-portfolio-analysis` — rescore affected ticker
-3. Update thesis status and composite score in Drive
+**B. Earnings (proactive preview + reactive analysis):**
+1. **Proactive — 30-day check:** Read `references/earnings-calendar.md`. For this ticker, check days until estimated results month in `PSX_Research/Earnings/calendar.md`. If ≤ 30 days and preview not yet run → flag: "📅 [TICKER] results due ~[Month YYYY]. Run earnings preview now?" If yes → call `psx-earnings-analyzer` PREVIEW mode → save to `PSX_Research/Earnings/previews/[TICKER]_preview_[YYYY-MM].md`.
+2. **Reactive — results published:** Call `psx-earnings-analyzer` ANALYZER mode — normalize results, compute EPS surprise vs. preview, update forward EPS, grade forecast accuracy (Beat / In-Line / Miss / Big Miss) → save to `PSX_Research/Earnings/outcomes/[TICKER]_outcome_[YYYY-MM].md`
+3. Call `psx-portfolio-analysis` — rescore affected ticker
+4. Update thesis status and composite score in Drive
 
 **C. Scheduled thesis check (monthly or user-requested):**
 1. Pull ticker file from Drive
@@ -186,7 +193,7 @@ If the stage is ambiguous, ask: "Are you adding [TICKER] to the watchlist, or ha
 2. Execute level-appropriate response:
    - Level 1: warn and continue
    - Level 2: flag + prompt thesis integrity check; call `psx-portfolio-analysis` EVENT RESCORE mode
-   - Level 3: halt session; full thesis review required before proceeding; document outcome in Decision Journal
+   - Level 3: halt session; full thesis review required before proceeding; read `references/decision-journal.md` → document outcome
 3. For Level 3 BROKEN thesis → invoke Broken Thesis Protocol (below)
 
 ---
@@ -198,8 +205,8 @@ When any position is marked BROKEN:
 1. Immediately flag: "🚨 BROKEN THESIS: [TICKER] — mandatory exit decision required."
 2. Present options:
    a. EXIT — proceed to CLOSED workflow
-   b. OVERRIDE HOLD — requires explicit Decision Journal entry documenting: why thesis failure is temporary, what would confirm recovery, hard stop date for reassessment
-3. "Hold and hope" without a Decision Journal entry is NOT accepted.
+   b. OVERRIDE HOLD — read `references/decision-journal.md` → requires explicit journal entry documenting: why thesis failure is temporary, what would confirm recovery, hard stop date for reassessment (max 30 days)
+3. "Hold and hope" without a completed Decision Journal entry is NOT accepted — Agent blocks the session.
 4. If user chooses OVERRIDE HOLD, record it and set a mandatory reassessment date (max 30 days).
 
 ---
@@ -226,7 +233,7 @@ When any position is marked BROKEN:
    - DISPROVEN — thesis failed
    - INCOMPLETE — exited before thesis fully resolved (rebalancing, risk management)
 
-4. **Log to Decision Journal** — record: exit date, price, P&L, thesis outcome, key lessons
+4. **Log to Decision Journal** — read `references/decision-journal.md` → record all 10 required fields (SELL entry): exit date, price, P&L, thesis outcome, key lesson, decision quality score 1–5
 
 5. **Archive to Drive** via `psx-investing-plugin`:
    - Move position in `portfolio-master.md` from OPEN → CLOSED
