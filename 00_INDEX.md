@@ -22,6 +22,7 @@ All 9 existing PSX skills are used as-is — never modified.
 | `10_DECISION_JOURNAL.md` | Decision Journal | Building trade reasoning log |
 | `11_ROUTING_AND_ALERTS.md` | Session Routing + Alert System | Building the Agent's routing table |
 | `12_DRIVE_SCHEMA.md` | Google Drive Schema | Setting up all Drive file/folder templates |
+| `13_ASSET_ALLOCATION.md` | Asset Allocation & Total Wealth View | Building holistic net worth view across PSX equities, provident fund, gratuity, endowment policies, VPS pension, cash, gold, real estate |
 
 ---
 
