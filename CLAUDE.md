@@ -90,7 +90,7 @@ psx-investment-agent/
 
 ## Hard Rules — Never Violate
 
-1. **Never modify existing skill files.** The 9 PSX skills listed below are used
+1. **Never modify existing skill files.** The 10 PSX skills listed below are used
    as-is. The Agent calls them — it does not edit them.
 
 2. **No automated trade execution.** Every buy/sell recommendation requires
@@ -127,6 +127,7 @@ in the SKILL.md. Do not rewrite their logic.
 | `psx-rs-trend` | Momentum, RS rank, Weinstein Stage, sector rotation |
 | `psx-tax-harvester` | CGT, loss harvest, VPS pension, year-end plan |
 | `PMEX Commodities` | Gold, oil, cotton, palm oil — anchored to US/China macro |
+| `crawl4ai` | Web crawling, JS rendering, structured data extraction from PSX/SECP/news sites |
 
 ---
 
@@ -162,7 +163,7 @@ so Claude routes correctly without hesitation.
 3. Write `skills/psx-investment-agent/references/` — routing-logic, alert-thresholds,
    ui-formats, skill-map
 4. Create `drive-schema/` templates — one file per Drive path in `12_DRIVE_SCHEMA.md`
-5. Validate all 17 session types with test trigger phrases
+5. Validate all 18 session types with test trigger phrases
 
 ---
 

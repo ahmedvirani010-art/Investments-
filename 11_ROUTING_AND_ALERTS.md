@@ -23,6 +23,7 @@
 | Portfolio Review | "review my portfolio", "rescore" | psx-investing-plugin (pull) → psx-portfolio-analysis → psx-tax-harvester (if June) |
 | Commodity Check | "gold outlook", "cotton impact" | PMEX Commodities → sector-analysis (equity linkage) |
 | Macro Shock | "SBP cuts", "Hormuz escalation" | psx-news-monitor → PMEX Commodities → psx-portfolio-analysis (scenario rescore) → psx-rs-trend |
+| Web Research | "scrape X", "fetch data from Y", "crawl SECP filings", "extract from PSX site", "get data from [URL]" | crawl4ai → feed result to relevant downstream skill (sector-analysis / psx-earnings-analyzer / psx-news-monitor) |
 
 ---
 
