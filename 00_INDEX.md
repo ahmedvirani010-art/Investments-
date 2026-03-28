@@ -2,7 +2,7 @@
 **Owner:** Noor Din · **Version:** 2.0 · **March 2026**
 
 Load only the module(s) relevant to your current build task.
-All 9 existing PSX skills are used as-is — never modified.
+All 10 existing PSX skills are used as-is — never modified.
 
 ---
 
@@ -28,7 +28,7 @@ All 9 existing PSX skills are used as-is — never modified.
 ## Shared Context (applies to every module)
 
 **Existing skills — orchestrate only, never modify:**
-`psx-investing-plugin` · `psx-portfolio-analysis` · `sector-analysis` · `psx-earnings-analyzer` · `psx-news-monitor` · `psx-valuation-screen` · `psx-rs-trend` · `psx-tax-harvester` · `PMEX Commodities`
+`psx-investing-plugin` · `psx-portfolio-analysis` · `sector-analysis` · `psx-earnings-analyzer` · `psx-news-monitor` · `psx-valuation-screen` · `psx-rs-trend` · `psx-tax-harvester` · `PMEX Commodities` · `pakistan-macro-analyst`
 
 **Hard rules across all modules:**
 - No automated trade execution — human confirmation required

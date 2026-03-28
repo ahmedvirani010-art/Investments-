@@ -22,7 +22,8 @@
 | Earnings Event | "results out for X" | psx-earnings-analyzer → psx-portfolio-analysis (event rescore) |
 | Portfolio Review | "review my portfolio", "rescore" | psx-investing-plugin (pull) → psx-portfolio-analysis → psx-tax-harvester (if June) |
 | Commodity Check | "gold outlook", "cotton impact" | PMEX Commodities → sector-analysis (equity linkage) |
-| Macro Shock | "SBP cuts", "Hormuz escalation" | psx-news-monitor → PMEX Commodities → psx-portfolio-analysis (scenario rescore) → psx-rs-trend |
+| Macro Shock | "SBP cuts", "Hormuz escalation" | psx-news-monitor → pakistan-macro-analyst (scenario update) → PMEX Commodities → psx-portfolio-analysis (scenario rescore) → psx-rs-trend |
+| Pakistan Macro Analysis | "macro risks", "scenario analysis", "IMF risks", "SBP outlook", "PKR trajectory", "political risk", "tail risk", "what happens if", "which scenario is unfolding", "KPI dashboard", "backtest the dashboard", "monitor Pakistan macro" | pakistan-macro-analyst (Steps 1–7) → psx-portfolio-analysis (sector impact mapping if portfolio context) |
 
 ---
 
@@ -40,3 +41,5 @@
 | DIVIDEND EX-DATE | v2.0 | Ex-date within 15 trading days | Flag in morning briefing with net yield after WHT |
 | WATCHLIST EXPIRY | v2.0 | Max wait period reached without entry | Prompt: reassess or remove |
 | BENCHMARK LAG | v2.0 | Portfolio underperforms KSE-100 by >10% over 3 months | Trigger Process Audit (Module 10) |
+| MACRO MONITOR STALE | v2.0 | macro-context.md in Drive >14d old | Auto-flag at session start; prompt user to run pakistan-macro-analyst scenario refresh |
+| KPI THRESHOLD BREACH | v2.0 | Any indicator in KPI dashboard crosses pessimistic/tail-risk threshold | Run pakistan-macro-analyst Step 6C dashboard read + scenario probability update; flag affected portfolio sectors |
