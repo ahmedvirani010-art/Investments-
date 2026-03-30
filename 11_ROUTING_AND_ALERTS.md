@@ -40,3 +40,20 @@
 | DIVIDEND EX-DATE | v2.0 | Ex-date within 15 trading days | Flag in morning briefing with net yield after WHT |
 | WATCHLIST EXPIRY | v2.0 | Max wait period reached without entry | Prompt: reassess or remove |
 | BENCHMARK LAG | v2.0 | Portfolio underperforms KSE-100 by >10% over 3 months | Trigger Process Audit (Module 10) |
+| HORMUZ ESCALATION | v2.0 | Strait of Hormuz shipping disruption reported | Run psx-news-monitor → flag ATRL/PNSC (positive), NRL/NATF/Haleon/AGP (negative) → offer scenario rescore |
+| SBP RATE DECISION | v2.0 | MPC announcement (next likely May 2026) | Re-rate NATF + PAKT most aggressively; reassess BAFL NIM; check ATLH demand impact; full portfolio rescore |
+| PKR DEPRECIATION | v2.0 | PKR/USD moves above Rs 295 | Activate import-cost cluster alert: flag NRL, AGP, Haleon. Note PAKT + POL benefit. |
+
+---
+
+## Portfolio-Level Macro Triggers
+
+Three macro variables drive the most simultaneous cross-portfolio impact. Check weekly.
+
+| Macro Variable | Positive Impact | Negative Impact | Alert Threshold |
+|---|---|---|---|
+| **Hormuz shipping status** | ATRL (crack spread), PNSC (freight rates) | NRL (feedstock cost), NATF / Haleon / AGP (import costs) | Any disruption report → immediate routing to Macro Shock session |
+| **SBP policy rate** | NATF (most aggressive re-rate), PAKT, ATLH demand | BAFL (NIM compression on cut) | MPC decision date — next likely May 2026 |
+| **PKR / USD rate** | PAKT, POL (USD revenues) | NRL, AGP, Haleon (import costs) | Rs 295 = portfolio-level alert for import-cost cluster |
+
+**Routing rule:** When a Macro Shock session is triggered, always check all three variables simultaneously before routing to individual skill analysis. A single event (e.g. Hormuz) drives opposite effects across holdings — surface both sides before rescoring.

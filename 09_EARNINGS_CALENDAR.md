@@ -15,6 +15,31 @@ Proactive preview triggering before results — not reactive analysis after. PSX
 
 ---
 
+## Priority Catalyst Calendar (per holding)
+
+Non-earnings events that are the single most important catalyst for each holding. Monitor alongside the earnings calendar.
+
+| Ticker | Priority Event / Date |
+|---|---|
+| ATRL | Next OGRA petroleum product price notification |
+| PNSC | Q3 FY26 results — confirms freight rate capture |
+| NRL | Next quarterly results — lube vs fuel segment split |
+| POL | Semi-annual results + OGRA wellhead price review |
+| OGDC | IMF programme review (circular debt resolution linked) |
+| NATF | SBP May 2026 MPC decision |
+| ICL | April 2026 — flaker plant commissioning confirmation |
+| PAKT | FY2026 federal budget (June 2026) — FED rate announcement |
+| BFBIO | Next quarterly revenue — confirms Zeptide ramp pace |
+| BAFL | SBP rate cut materialising — threshold trigger for re-weight decision |
+| HALEON | DRAP pricing revision announcement |
+| AGP | Next quarterly gross margin |
+| HIGHNOON | FORCE export approval announcement |
+| ATLH | PAMA monthly motorcycle volumes |
+
+**Routing rule:** At each session start, check whether any priority event has occurred or is within 14 days. If yes, trigger the relevant module (Thesis Review / Earnings Preview / Macro Shock) before proceeding.
+
+---
+
 ## Drive Structure
 
 ```
